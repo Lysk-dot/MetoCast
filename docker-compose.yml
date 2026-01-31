@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: metocast_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: metocast
+      POSTGRES_PASSWORD: metocast123
+      POSTGRES_DB: metocast_hub
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - metocast_network
+
+  # FastAPI Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metocast_api
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./app:/app/app
+      - ./alembic:/app/alembic
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://metocast:metocast123@db:5432/metocast_hub
+    depends_on:
+      - db
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    networks:
+      - metocast_network
+
+volumes:
+  postgres_data:
+
+networks:
+  metocast_network:
+    driver: bridge
