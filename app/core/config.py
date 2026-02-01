@@ -4,15 +4,14 @@ Carrega variáveis de ambiente do arquivo .env
 """
 import os
 from pydantic_settings import BaseSettings
-from typing import List
+from pydantic import model_validator
+from typing import List, Optional
 
 
 class Settings(BaseSettings):
-    # Database - tenta DATABASE_URL ou DATABASE_PUBLIC_URL (Railway)
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        os.getenv("DATABASE_PUBLIC_URL", "postgresql://metocast:metocast123@localhost:5432/metocast_hub")
-    )
+    # Database - Railway pode usar DATABASE_URL ou DATABASE_PUBLIC_URL
+    DATABASE_URL: Optional[str] = None
+    DATABASE_PUBLIC_URL: Optional[str] = None
     
     # Security
     SECRET_KEY: str = "sua-chave-secreta-mude-em-producao"
@@ -29,7 +28,17 @@ class Settings(BaseSettings):
     # App
     PROJECT_NAME: str = "Metocast Hub API"
     VERSION: str = "1.0.0"
-    DEBUG: bool = True
+    DEBUG: bool = False  # False em produção
+    
+    @model_validator(mode='after')
+    def set_database_url(self):
+        """Usa DATABASE_URL se disponível, senão DATABASE_PUBLIC_URL"""
+        if not self.DATABASE_URL:
+            if self.DATABASE_PUBLIC_URL:
+                self.DATABASE_URL = self.DATABASE_PUBLIC_URL
+            else:
+                self.DATABASE_URL = "postgresql://metocast:metocast123@localhost:5432/metocast_hub"
+        return self
     
     @property
     def origins_list(self) -> List[str]:
