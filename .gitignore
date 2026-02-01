@@ -61,3 +61,12 @@ htmlcov/
 # Alembic
 alembic/versions/*.py
 !alembic/versions/__init__.py
+.venv/
+__pycache__/
+*.pyc
+.env
+*.egg-info/
+dist/
+build/
+node_modules/
+.DS_Store
