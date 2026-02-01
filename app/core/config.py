@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api"
     ADMIN_API_PREFIX: str = "/api/admin"
     
-    # CORS
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8080"
+    # CORS - adicione URLs de produção do frontend
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8080,http://localhost:5173,https://metocast.vercel.app,https://*.vercel.app"
     
     # App
     PROJECT_NAME: str = "Metocast Hub API"
