@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     ADMIN_API_PREFIX: str = "/api/admin"
     
     # CORS - adicione URLs de produção do frontend
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8080,http://localhost:5173,https://metocast.vercel.app,https://*.vercel.app"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8080,http://localhost:5173,https://lysk-dot.github.io,https://metocast.vercel.app"
     
     # App
     PROJECT_NAME: str = "Metocast Hub API"
