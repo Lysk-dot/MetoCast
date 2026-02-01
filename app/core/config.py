@@ -2,13 +2,17 @@
 Configurações da aplicação usando Pydantic Settings.
 Carrega variáveis de ambiente do arquivo .env
 """
+import os
 from pydantic_settings import BaseSettings
 from typing import List
 
 
 class Settings(BaseSettings):
-    # Database
-    DATABASE_URL: str = "postgresql://metocast:metocast123@localhost:5432/metocast_hub"
+    # Database - tenta DATABASE_URL ou DATABASE_PUBLIC_URL (Railway)
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        os.getenv("DATABASE_PUBLIC_URL", "postgresql://metocast:metocast123@localhost:5432/metocast_hub")
+    )
     
     # Security
     SECRET_KEY: str = "sua-chave-secreta-mude-em-producao"
