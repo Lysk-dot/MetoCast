@@ -7,18 +7,22 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
-# Configurar args de conexão (SSL para produção Railway)
+# Configurar args de conexão
 connect_args = {}
-database_url = settings.DATABASE_URL
+database_url = settings.DATABASE_URL or ""
 
 # Railway usa SSL - ajusta URL se necessário
-if "railway" in database_url or "rlwy" in database_url:
+if database_url and ("railway" in database_url or "rlwy" in database_url):
     # Para alguns drivers, precisa sslmode
     if "sslmode" not in database_url:
         if "?" in database_url:
             database_url += "&sslmode=require"
         else:
             database_url += "?sslmode=require"
+
+# Fallback caso DATABASE_URL não esteja configurada
+if not database_url:
+    database_url = "postgresql://metocast:metocast123@localhost:5432/metocast_hub"
 
 # Engine do SQLAlchemy
 engine = create_engine(

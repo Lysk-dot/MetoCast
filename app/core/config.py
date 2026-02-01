@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     DATABASE_PUBLIC_URL: Optional[str] = None
     
     # Security
-    SECRET_KEY: str = "sua-chave-secreta-mude-em-producao"
+    SECRET_KEY: str = "metocast-super-secret-key-2026"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
