@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: metocast_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: metocast
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: metocast_hub
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+      - ./backups:/backups  # Pasta para backups
+    networks:
+      - metocast_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U metocast"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metocast_api_prod
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://metocast:${DB_PASSWORD}@db:5432/metocast_hub
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      DEBUG: "False"
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - metocast_network
+    volumes:
+      - ./logs:/app/logs  # Logs da aplicação
+    command: >
+      sh -c "alembic upgrade head &&
+             python seed.py &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2"
+
+volumes:
+  postgres_data_prod:
+    driver: local
+
+networks:
+  metocast_network:
+    driver: bridge

@@ -45,6 +45,10 @@ env/
 
 # Logs
 *.log
+logs/
+
+# Backups
+backups/*.sql
 
 # OS
 .DS_Store

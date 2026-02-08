@@ -99,6 +99,63 @@ Isso criará:
 - ✓ Links oficiais de exemplo
 - ✓ Episódios de exemplo
 
+## 🚀 Produção (Dell T110 II com CloudFlare Tunnel)
+
+### Pré-requisitos
+- Docker e Docker Compose instalados
+- CloudFlare Tunnel configurado
+- Domínio apontando para o tunnel
+
+### Deploy
+
+1. **Criar arquivo .env:**
+```bash
+cp .env.example .env
+nano .env  # Editar com valores reais
+```
+
+2. **Gerar SECRET_KEY:**
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+3. **Iniciar stack de produção:**
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
+```
+
+4. **Verificar logs:**
+```bash
+docker-compose -f docker-compose.prod.yml logs -f
+```
+
+5. **Criar backup do banco:**
+```bash
+docker exec metocast_postgres_prod pg_dump -U metocast metocast_hub > backups/metocast_$(date +%Y%m%d).sql
+```
+
+### Manutenção
+
+**Ver logs:**
+```bash
+docker-compose -f docker-compose.prod.yml logs -f api
+```
+
+**Reiniciar API:**
+```bash
+docker-compose -f docker-compose.prod.yml restart api
+```
+
+**Parar tudo:**
+```bash
+docker-compose -f docker-compose.prod.yml down
+```
+
+**Backup automático (adicionar ao cron):**
+```bash
+0 2 * * * docker exec metocast_postgres_prod pg_dump -U metocast metocast_hub > /home/felipe/MetoCast/backups/metocast_$(date +\%Y\%m\%d).sql
+```
+
 ## 📚 Documentação da API
 
 Após iniciar o servidor, acesse:

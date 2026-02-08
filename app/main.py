@@ -16,10 +16,26 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configurar CORS
+
+# Lista de origens permitidas para CORS
+origins = [
+    "http://localhost:5173",      # Desenvolvimento local
+    "http://localhost:3000",      # Frontend alternativo
+    "http://192.168.15.10:5173",  # Rede local (Dell T110)
+    "https://lysk-dot.github.io", # GitHub Pages
+    # Adicione seu domínio CloudFlare quando tiver
+    # "https://metocast.seudominio.com",
+    # "https://api.metocast.seudominio.com",
+]
+
+# Em produção, use as origins do settings (variável de ambiente)
+import os
+if os.getenv("DEBUG", "True").lower() == "false":
+    origins = settings.origins_list
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.origins_list,
+    allow_origins=origins,  # Lista de origens permitidas
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
