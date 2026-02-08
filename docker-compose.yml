@@ -25,9 +25,7 @@ services:
     container_name: metocast_api
     restart: unless-stopped
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    volumes:
-      - ./app:/app/app
-      - ./alembic:/app/alembic
+    # volumes removidos para evitar conflito
     ports:
       - "8000:8000"
     environment:

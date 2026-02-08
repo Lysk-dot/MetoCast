@@ -6,8 +6,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código da aplicação
-COPY . .
+COPY app/ ./app/
+COPY alembic/ ./alembic/
 
 # Expor porta
 EXPOSE 8000

@@ -13,6 +13,10 @@ from app.core.security import create_access_token, decode_access_token
 from app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+# Handler OPTIONS para login (CORS preflight)
+@router.options("/login")
+async def options_login():
+    return {}
 
 # OAuth2 scheme para extrair token do header Authorization
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_PREFIX}/auth/login")
