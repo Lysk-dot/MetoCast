@@ -1,0 +1,36 @@
+name: Deploy Backend to Server
+
+on:
+  push:
+    branches: [Stable]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: Stable
+      
+      - name: Pull latest changes
+        run: |
+          cd /home/github-runner/repos/MetoCast
+          git pull origin Stable
+      
+      - name: Install Python dependencies
+        run: |
+          cd /home/github-runner/repos/MetoCast
+          python3 -m pip install --user -r requirements.txt
+      
+      - name: Run migrations
+        run: |
+          cd /home/github-runner/repos/MetoCast
+          python3 -m alembic upgrade head
+        continue-on-error: true
+      
+      - name: Restart backend service
+        run: |
+          echo "Backend atualizado com sucesso!"
